@@ -1,24 +1,41 @@
 ---
 title: Giới thiệu
-description: Tài liệu thực dụng để bắt đầu và làm việc hiệu quả với ALP.
-sidebar:
-  order: 1
+description: ALP là lớp điều phối code-native cho Claude Code và Codex CLI.
 ---
 
-ALP Docs là điểm vào chung cho các quy trình, quyết định và hướng dẫn vận hành — từ ý tưởng đến hệ thống agent có thể kiểm chứng.
+ALP là launcher code-native cho một nhóm agent dùng chung policy, workflow và memory. Bạn chọn độ khó của công việc; ALP chuẩn bị identity và quyền trước khi chuyển execution cho Claude Code hoặc Codex CLI.
 
-- **Markdown-first:** Nội dung nằm cạnh source code, dễ review và theo dõi thay đổi.
-- **Tìm thấy nhanh:** Navigation và full-text search đưa người đọc đến đúng chi tiết.
-- **Dùng được ngay:** Mỗi trang tập trung vào một kết quả cụ thể và cách kiểm chứng.
+ALP không thay thế hai runtime đó. Nó giữ phần điều phối ở một lớp riêng để cùng một role có hành vi và giới hạn nhất quán, dù model của role chạy ở runtime nào.
+
+## ALP mang lại gì?
+
+- **Một lệnh để bắt đầu:** `alp` mở coordinator mặc định trong project hiện tại.
+- **Quyền có thể kiểm tra:** tools, skills, memory và workspace được chốt trước khi runtime chạy.
+- **Specialist có ranh giới:** delegation luôn đi qua policy; role không được tự mở rộng quyền.
+- **Context có continuity:** quyết định và ràng buộc quan trọng có thể sống qua compaction mà không sao chép cả transcript.
+- **Project mở rộng được:** custom agent và skill nằm trong `.alp/`, review được như source code.
+
+## Mental model
+
+```text
+Bạn chọn mode và giao việc
+  → ALP resolve AgentDefinition + policy
+  → ALP chuẩn bị execution snapshot
+  → model quyết định Claude Code hay Codex CLI
+  → runtime thực thi trong đúng quyền đã cấp
+```
+
+Nếu role, tool, path hoặc memory scope không được khai báo, ALP từ chối thay vì tự đoán. Xem [ALP hoạt động thế nào](./concepts/how-alp-works/) để hiểu luồng đầy đủ.
 
 ## Bắt đầu nhanh
 
-- **Lần đầu ghé thăm?** Đi qua [Bắt đầu](./guides/getting-started/) để nắm cấu trúc tài liệu.
-- **Sắp thêm trang mới?** Xem [Viết tài liệu bằng Markdown](./guides/writing-markdown/) để dùng đúng frontmatter và components.
-- **Đang tìm một chi tiết?** Dùng search trên navigation; index được tạo cùng production build.
+- Chưa có ALP? [Cài đặt và kiểm tra môi trường](./getting-started/installation/).
+- Muốn mở phiên đầu tiên? Làm theo [Bắt đầu nhanh](./getting-started/quickstart/).
+- Đã dùng ALP? Tra [CLI reference](./reference/cli/) hoặc [xử lý sự cố](./reference/troubleshooting/).
+- Muốn thử phần đang phát triển? Xem [Custom agent](./guides/custom-agents/) và [skill của project](./guides/project-skills/) trên source sau `v0.10.4`.
 
-## Nguyên tắc nội dung
+## Ranh giới quan trọng
 
-:::tip[Docs phải dùng được]
-Mỗi trang nên giúp người đọc hoàn thành một việc cụ thể và kèm cách kiểm chứng kết quả.
+:::caution[Policy có hiệu lực trước prompt]
+Một yêu cầu trong prompt không thể cấp thêm tool, workspace hay private memory. Hãy sửa definition và đi qua trust flow thay vì tìm đường vòng trong runtime.
 :::

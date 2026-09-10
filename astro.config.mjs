@@ -49,11 +49,36 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Bắt đầu',
-          items: [{ label: 'Giới thiệu', slug: 'docs' }],
+          items: [
+            { label: 'Giới thiệu', slug: 'docs' },
+            { label: 'Cài đặt', slug: 'docs/getting-started/installation' },
+            { label: 'Bắt đầu nhanh', slug: 'docs/getting-started/quickstart' },
+          ],
+        },
+        {
+          label: 'Khái niệm',
+          items: [
+            { label: 'ALP hoạt động thế nào', slug: 'docs/concepts/how-alp-works' },
+            { label: 'Nấc và runtime', slug: 'docs/concepts/modes-and-runtimes' },
+            { label: 'Agent và quyền', slug: 'docs/concepts/agents-and-authority' },
+          ],
         },
         {
           label: 'Hướng dẫn',
-          items: [{ autogenerate: { directory: 'docs/guides' } }],
+          items: [
+            { label: 'Thiết lập project', slug: 'docs/guides/project-setup' },
+            { label: 'Giao việc', slug: 'docs/guides/delegation' },
+            { label: 'Memory và continuity', slug: 'docs/guides/memory-and-continuity' },
+            { label: 'Custom agent (preview)', slug: 'docs/guides/custom-agents' },
+            { label: 'Skill của project (preview)', slug: 'docs/guides/project-skills' },
+          ],
+        },
+        {
+          label: 'Tham chiếu',
+          items: [
+            { label: 'CLI', slug: 'docs/reference/cli' },
+            { label: 'Xử lý sự cố', slug: 'docs/reference/troubleshooting' },
+          ],
         },
       ],
     }),
