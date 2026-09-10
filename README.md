@@ -49,6 +49,7 @@ Static output nằm trong `dist/`. Pagefind index chỉ được sinh khi build,
 ├── public/
 │   └── favicon.svg
 ├── src/
+│   ├── assets/               # ALP wordmark cho light/dark theme
 │   ├── content.config.ts     # Docs/i18n collections
 │   ├── content/
 │   │   ├── docs/             # Markdown source of truth
@@ -57,6 +58,8 @@ Static output nằm trong `dist/`. Pagefind index chỉ được sinh khi build,
 │       └── custom.css        # Visual tokens và theme polish
 └── package.json
 ```
+
+Ba brand asset đều là vector SVG: `public/favicon.svg` dùng cho browser/app icon, còn hai wordmark trong `src/assets/` được Starlight tự đổi theo light/dark theme.
 
 ## Thêm trang tài liệu
 

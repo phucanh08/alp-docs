@@ -12,6 +12,8 @@ Mọi thay đổi đáng chú ý của dự án được ghi trong file này. Đ
 
 - Astro config tự suy ra GitHub Pages `site` và `base` từ repository context.
 - Internal content links dùng relative paths để hoạt động cả ở domain root và project subpath.
+- Thay favicon cũ và site title bằng bộ ALP SVG vector hóa, có wordmark riêng cho light/dark theme.
+- Chuyển visual system sang docs shell tối giản: compact header, bordered sidebar, content column tập trung và green accent.
 
 ## [0.1.0] - 2026-09-10
 
