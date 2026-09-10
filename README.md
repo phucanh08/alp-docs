@@ -1,6 +1,9 @@
 # ALP Docs
 
-Static documentation site cho ALP, xây bằng [Astro](https://astro.build/) và [Starlight](https://starlight.astro.build/). Toàn bộ nội dung chính được viết bằng Markdown.
+Static documentation site cho ALP, xây bằng [Astro](https://astro.build/) và [Starlight](https://starlight.astro.build/).
+
+**Repo này giữ khung site, không giữ content.** Toàn bộ tài liệu người dùng sống ở
+[`alp-code/docs/user/`](https://github.com/phucanh08/alp-code/tree/main/docs/user) và được kéo về mỗi lần build. Sửa câu chữ thì sửa bên đó.
 
 ## Tính năng
 
@@ -22,6 +25,12 @@ npm install
 npm run dev
 ```
 
+`predev` tự kéo content về từ `alp-code@main`. Nếu có sẵn checkout local — sửa docs và xem kết quả ngay không cần push:
+
+```bash
+ALP_CODE_PATH=../alp-code npm run dev
+```
+
 Astro sẽ in local URL trong terminal, mặc định là `http://localhost:4321`.
 
 ## Production build
@@ -40,8 +49,9 @@ Static output nằm trong `dist/`. Pagefind index chỉ được sinh khi build,
 | `npm run dev` | Chạy development server với hot reload |
 | `npm run build` | Build static site và Pagefind index vào `dist/` |
 | `npm run preview` | Preview production build local |
-| `npm run check:release` | Hỏi GitHub xem alp-code đã có release nào mới hơn pin chưa; thoát `1` nếu có |
-| `npm run sync:release` | Chạy codemod version/pin rồi in report những chỗ cần người quyết định |
+| `npm run fetch:docs` | Kéo `docs/user/` của alp-code vào `src/content/docs/docs/` |
+
+`fetch:docs` chạy tự động qua `predev` và `prebuild`; hiếm khi phải gọi tay.
 
 ## Cấu trúc
 
@@ -54,8 +64,10 @@ Static output nằm trong `dist/`. Pagefind index chỉ được sinh khi build,
 │   ├── assets/               # ALP wordmark cho light/dark theme
 │   ├── content.config.ts     # Docs/i18n collections
 │   ├── content/
-│   │   ├── docs/             # Markdown source of truth
+│   │   ├── docs/
+│   │   │   └── docs/         # KÉO VỀ từ alp-code, gitignore
 │   │   └── i18n/
+│   ├── generated/            # sidebar.json kéo về, gitignore
 │   └── styles/
 │       └── custom.css        # Visual tokens và theme polish
 └── package.json
@@ -65,22 +77,7 @@ Ba brand asset đều là vector SVG: `public/favicon.svg` dùng cho browser/app
 
 ## Thêm trang tài liệu
 
-Tạo file `.md` trong `src/content/docs/docs/`. Thư mục và tên file quyết định URL dưới `/docs/`; frontmatter cung cấp metadata cho navigation và SEO.
-
-```md
----
-title: Tên trang
-description: Một câu mô tả kết quả người đọc nhận được.
-sidebar:
-  order: 3
----
-
-# Nội dung
-
-Viết hướng dẫn tại đây.
-```
-
-Sidebar nhóm `Hướng dẫn` tự động đọc các trang trong `src/content/docs/docs/guides/`.
+Ở repo `alp-code`, không phải ở đây. Thêm file `.md` vào `docs/user/` rồi thêm một mục vào `docs/user/sidebar.json`. Xem [`docs/user/README.md`](https://github.com/phucanh08/alp-code/blob/main/docs/user/README.md).
 
 ## Trước khi deploy
 
@@ -105,38 +102,29 @@ Workflow đặt production URL qua `DEPLOY_SITE=https://alp.anhlp.com`, phục v
 
 Không cần GitHub secret. Workflow dùng `GITHUB_TOKEN` ngắn hạn với quyền tối thiểu `contents: read`, `pages: write` và `id-token: write`.
 
-## Đồng bộ với alp-code
+## Content đến từ đâu
 
-`alp-code` và `alp-docs` là hai repository độc lập. Đường release của `alp-code` cố ý chạy tay và không dùng GitHub Actions, nên thông tin đi ngược lại: repo docs tự hỏi, `alp-code` không phải bắn gì sang.
+`scripts/fetch-docs.mjs` kéo `docs/user/` của alp-code vào `src/content/docs/docs/`, và `docs/user/sidebar.json` vào `src/generated/sidebar.json`. Cả hai đường dẫn đích đều nằm trong `.gitignore` — coi chúng như build output, mỗi lần chạy là xoá sạch rồi ghi lại.
 
-`alp-code-pin.json` giữ hai giá trị và chúng **không** phải một:
-
-| Trường | Nghĩa |
+| Nguồn | Khi nào dùng |
 |---|---|
-| `stable` | Release mà docs đang gọi là stable |
-| `pin` | Revision nguồn mà docs đã được đối chiếu |
+| `ALP_CODE_PATH=../alp-code` hoặc `--from <path>` | Sửa docs local, thấy kết quả ngay |
+| Mặc định: tarball `alp-code@main` trên GitHub | CI, và mọi lần build không có checkout local |
 
-`pin` được phép chạy trước `stable`: docs mô tả cả preview sau tag mới nhất, và đó là trạng thái làm việc bình thường chứ không phải lỗi. Vì vậy drift chỉ đo theo `stable`.
+Đổi ref bằng `ALP_CODE_REF` hoặc `--ref`. Deploy workflow đặt `ALP_CODE_REF: main`, nghĩa là site mô tả source HEAD của alp-code chứ không phải bản stable mới nhất — khớp với cách content được viết, vì nó có banner đánh dấu phần chưa vào stable.
 
-Workflow [`.github/workflows/check-alp-code-release.yml`](.github/workflows/check-alp-code-release.yml) chạy hằng ngày lúc 02:00 UTC, và chạy tay được qua **Actions → Kiểm tra release mới của alp-code → Run workflow** (có thể truyền một tag cụ thể thay vì lấy release mới nhất). Khi có release mới, nó mở **PR nháp** chứ không commit thẳng.
+Bước fetch fail sớm nếu `sidebar.json` trỏ vào trang không tồn tại, và cảnh báo nếu có trang không nằm trong sidebar. Không có bước này thì một commit ở alp-code sẽ làm gãy build ở đây với thông báo của Starlight, khó lần ra nguyên nhân.
 
-Ranh giới giữa máy và người:
+### Khi nào site được build lại
 
-- **Máy sửa:** chuỗi version, commit pin và link kiểm chứng — những thứ suy được từ một cái tag.
-- **Máy chỉ đo rồi hỏi:** banner preview nào phải xoá, và `reference/cli.md` đã lệch chỗ nào. Thân PR đính kèm mục CHANGELOG của release đó, diff help text giữa pin cũ và tag mới, và checklist từng banner.
+| Trigger | Lý do |
+|---|---|
+| Push lên `main` của repo này | Khung site đổi |
+| Cron mỗi giờ | Content bên alp-code đổi |
+| **Actions → Deploy to GitHub Pages → Run workflow** | Muốn ngay |
+| `repository_dispatch` type `docs-updated` | Đường cho alp-code chủ động đẩy; cần PAT lưu bên đó, chưa bật |
 
-Lý do tách như vậy: một release đưa `alp agent` vào stable thì banner “chưa có trong stable `v0.10.4`” phải bị **xoá**, không phải đổi số. Tự đổi số là biến docs từ cũ thành sai. PR luôn ở trạng thái nháp và không bao giờ auto-merge.
-
-Build trên runner **không** chặn PR. Một release làm gãy build là chuyện phải thấy trong PR, không phải chuyện làm PR biến mất; kết quả build được ghi thẳng vào thân PR.
-
-Thiết lập lần đầu:
-
-1. Mở **Settings → Actions → General → Workflow permissions**.
-2. Bật **Allow GitHub Actions to create and approve pull requests**. Không bật thì bước mở PR fail với lỗi permission.
-
-Hai điều cần biết về `schedule`: workflow phải nằm trên nhánh mặc định mới chạy, và GitHub tắt scheduled workflow sau 60 ngày repository không có hoạt động nào — chạy tay một lần là bật lại.
-
-Chạy local cũng được. `check:release` chỉ hỏi và thoát `1` nếu lệch, hợp cho một bước CI riêng; `sync:release` sửa cây làm việc rồi in report ra stdout.
+alp-code không phải bắn gì sang: repo này tự hỏi. Đổi lại, docs mới mất tối đa một giờ để lên production, hoặc bấm Run workflow là xong.
 
 ## Changelog
 

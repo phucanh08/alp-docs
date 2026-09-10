@@ -3,3 +3,7 @@ dist/
 .astro/
 .DS_Store
 memory/
+
+# Content của site là của alp-code; `npm run fetch:docs` kéo về mỗi lần build.
+src/content/docs/docs/
+src/generated/

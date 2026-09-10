@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "fetch:docs": "node scripts/fetch-docs.mjs",
+    "predev": "npm run fetch:docs",
     "dev": "astro dev",
+    "prebuild": "npm run fetch:docs",
     "build": "astro build",
-    "preview": "astro preview",
-    "sync:release": "node scripts/sync-release.mjs",
-    "check:release": "node scripts/sync-release.mjs --check"
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.0",

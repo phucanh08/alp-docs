@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
@@ -21,6 +22,21 @@ const githubPages =
       }
     : {};
 const docsRoot = githubPages.base && githubPages.base !== '/' ? `${githubPages.base}/docs/` : '/docs/';
+
+// Thứ tự và nhãn sidebar sống cạnh content trong alp-code, không ở đây. `npm run fetch:docs`
+// kéo cả hai về; nó chạy qua `prebuild`/`predev` nên file này luôn có sẵn khi Astro đọc config.
+// Fail to ở đây là cố ý: build với sidebar rỗng sẽ ra một site trông như đã mất hết trang.
+const sidebarManifest = JSON.parse(
+  readFileSync(new URL('./src/generated/sidebar.json', import.meta.url), 'utf8'),
+);
+
+const sidebar = sidebarManifest.groups.map((group) => ({
+  label: group.label,
+  items: group.items.map((item) => ({
+    label: item.label,
+    slug: item.path ? `docs/${item.path}` : 'docs',
+  })),
+}));
 
 export default defineConfig({
   ...githubPages,
@@ -46,41 +62,7 @@ export default defineConfig({
         },
       },
       customCss: ['./src/styles/custom.css'],
-      sidebar: [
-        {
-          label: 'Bắt đầu',
-          items: [
-            { label: 'Giới thiệu', slug: 'docs' },
-            { label: 'Cài đặt', slug: 'docs/getting-started/installation' },
-            { label: 'Bắt đầu nhanh', slug: 'docs/getting-started/quickstart' },
-          ],
-        },
-        {
-          label: 'Khái niệm',
-          items: [
-            { label: 'ALP hoạt động thế nào', slug: 'docs/concepts/how-alp-works' },
-            { label: 'Nấc và runtime', slug: 'docs/concepts/modes-and-runtimes' },
-            { label: 'Agent và quyền', slug: 'docs/concepts/agents-and-authority' },
-          ],
-        },
-        {
-          label: 'Hướng dẫn',
-          items: [
-            { label: 'Thiết lập project', slug: 'docs/guides/project-setup' },
-            { label: 'Giao việc', slug: 'docs/guides/delegation' },
-            { label: 'Memory và continuity', slug: 'docs/guides/memory-and-continuity' },
-            { label: 'Custom agent (preview)', slug: 'docs/guides/custom-agents' },
-            { label: 'Skill của project (preview)', slug: 'docs/guides/project-skills' },
-          ],
-        },
-        {
-          label: 'Tham chiếu',
-          items: [
-            { label: 'CLI', slug: 'docs/reference/cli' },
-            { label: 'Xử lý sự cố', slug: 'docs/reference/troubleshooting' },
-          ],
-        },
-      ],
+      sidebar,
     }),
   ],
 });

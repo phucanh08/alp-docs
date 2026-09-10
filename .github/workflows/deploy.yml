@@ -1,9 +1,21 @@
 name: Deploy to GitHub Pages
 
+# Content không nằm trong repo này. `prebuild` gọi scripts/fetch-docs.mjs để kéo
+# docs/user/ của alp-code@main về trước khi Astro chạy, nên site được build lại vì
+# một trong hai lý do: khung site ở repo này đổi, hoặc content bên alp-code đổi.
+
 on:
+  # Khung site đổi.
   push:
     branches: [main]
+  # Content bên alp-code đổi. alp-code không phải bắn gì sang: repo này tự hỏi.
+  schedule:
+    - cron: "0 * * * *"
   workflow_dispatch:
+  # Đường đi tức thì, nếu sau này alp-code muốn đẩy: nó POST một repository_dispatch
+  # với type `docs-updated`. Cần một PAT lưu bên alp-code, nên chưa bật ở đó.
+  repository_dispatch:
+    types: [docs-updated]
 
 permissions:
   contents: read
@@ -28,6 +40,17 @@ jobs:
         env:
           DEPLOY_TARGET: github-pages
           DEPLOY_SITE: https://alp.anhlp.com
+          # Ref của alp-code mà content được lấy từ đó. Đổi sang một tag ở đây là
+          # chuyển site sang mô tả stable thay vì source HEAD.
+          ALP_CODE_REF: main
+
+      - name: Ghi lại content được build từ đâu
+        if: always()
+        run: |
+          SHA=$(curl -sS -H "authorization: Bearer ${{ github.token }}" \
+            https://api.github.com/repos/phucanh08/alp-code/commits/main \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["sha"])')
+          echo "Content lấy từ [phucanh08/alp-code@\`${SHA:0:7}\`](https://github.com/phucanh08/alp-code/commit/$SHA)." >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
     needs: build

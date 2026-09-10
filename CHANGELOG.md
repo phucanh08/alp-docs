@@ -6,13 +6,15 @@ Mọi thay đổi đáng chú ý của dự án được ghi trong file này. Đ
 
 ### Added
 
-- Bộ tài liệu người dùng cho `alp-code`: cài đặt, bắt đầu nhanh, ba trang khái niệm, năm hướng dẫn vận hành và reference CLI/xử lý sự cố.
+- Bộ tài liệu người dùng cho `alp-code`: cài đặt, bắt đầu nhanh, ba trang khái niệm, năm hướng dẫn vận hành và reference CLI/xử lý sự cố. Content sau đó chuyển sang `alp-code/docs/user/`; xem mục Changed.
 - GitHub Actions workflow tự build và deploy static output lên GitHub Pages khi push nhánh `main`.
-- `scripts/sync-release.mjs` và `alp-code-pin.json`: đối chiếu docs với release mới nhất của `alp-code`, tự sửa chuỗi version, commit pin và link kiểm chứng, rồi in report cho phần chỉ người quyết định được. `npm run check:release` chỉ đo và thoát `1` khi lệch.
-- GitHub Actions workflow `check-alp-code-release.yml` chạy hằng ngày và bấm tay được: poll release của `alp-code` rồi mở PR nháp kèm mục CHANGELOG của release, diff help text và checklist banner preview. `alp-code` không phải bắn gì sang, vì đường release của repo đó cố ý chạy tay.
+- `scripts/fetch-docs.mjs` kéo `docs/user/` của `alp-code` vào cây build, từ tarball GitHub hoặc từ checkout local qua `ALP_CODE_PATH`. Chạy tự động qua `predev`/`prebuild`.
+- Deploy workflow chạy thêm theo cron mỗi giờ, `workflow_dispatch` và `repository_dispatch` type `docs-updated`, để content đổi bên `alp-code` cũng dựng lại site.
 
 ### Changed
 
+- Content của site chuyển sang `alp-code/docs/user/` và repo này không còn giữ bản sao. Tài liệu người dùng giờ đi cùng commit code sinh ra nó, thay vì được đồng bộ sau bằng codemod ở một repo khác. `src/content/docs/docs/` và `src/generated/` trở thành build output và vào `.gitignore`.
+- Thứ tự và nhãn sidebar đọc từ `alp-code/docs/user/sidebar.json` thay vì hardcode trong `astro.config.mjs`, để thêm một trang là một commit ở một repo.
 - Đồng bộ docs với `alp-code` commit `7833490`: thêm mục "Runtime nào cưỡng chế phần nào" vào trang Agent và quyền, và nói rõ khối **Enforced by** mà tier 2 của `alp agent test`/`alp agent add` in ra.
 - Sửa các claim về quyền cho đúng mức cưỡng chế thật ở landing page, ALP hoạt động thế nào, Nấc và runtime, Memory và continuity và Custom agent: trên Codex, tool grant và read root là ràng buộc mức prompt; chỉ ghi và egress mạng bị sandbox chặn.
 - Cập nhật commit pin và link kiểm chứng từ `777113b` sang `7833490` ở CLI reference, xử lý sự cố, Nấc và runtime, Custom agent và Skill của project.
@@ -29,6 +31,7 @@ Mọi thay đổi đáng chú ý của dự án được ghi trong file này. Đ
 
 ### Removed
 
+- `scripts/sync-release.mjs`, `alp-code-pin.json` và workflow `check-alp-code-release.yml`. Chúng mở PR sửa chuỗi version và commit pin trong `src/content/docs/docs/` — thư mục giờ là output của bước fetch, không còn file nào được commit ở repo này. Việc giữ số version trong docs cho khớp release thuộc về `alp-code`.
 - Hai trang placeholder `guides/getting-started` và `guides/writing-markdown` của bộ khung Starlight.
 
 ## [0.1.0] - 2026-09-10
