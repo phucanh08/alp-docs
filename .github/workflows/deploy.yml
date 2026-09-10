@@ -12,8 +12,9 @@ on:
   schedule:
     - cron: "0 * * * *"
   workflow_dispatch:
-  # Đường đi tức thì, nếu sau này alp-code muốn đẩy: nó POST một repository_dispatch
-  # với type `docs-updated`. Cần một PAT lưu bên alp-code, nên chưa bật ở đó.
+  # Đường đi tức thì: alp-code POST một repository_dispatch type `docs-updated` từ
+  # .github/workflows/notify-docs.yml khi docs/user/ đổi trên main. Workflow đó tự bỏ
+  # qua nếu chưa có secret ALP_DOCS_DISPATCH_TOKEN, nên cron ở trên vẫn là lưới an toàn.
   repository_dispatch:
     types: [docs-updated]
 
