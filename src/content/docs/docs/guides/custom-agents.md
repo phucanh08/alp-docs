@@ -4,7 +4,7 @@ description: Khai báo, kiểm tra và trust một specialist riêng cho project
 ---
 
 :::caution[Preview, chưa có trong stable `v0.10.4`]
-Custom agent và nhóm lệnh `alp agent …` ở trang này thuộc checkout sau tag `v0.10.4` (commit `777113b`). Stable binary hiện chưa có command này.
+Custom agent và nhóm lệnh `alp agent …` ở trang này thuộc checkout sau tag `v0.10.4` (commit `7833490`). Stable binary hiện chưa có command này.
 :::
 
 Custom agent là definition dạng dữ liệu trong project. Nó chỉ chạy sau khi vượt capability ceiling, ba tầng kiểm tra và trust gate tương tác.
@@ -82,7 +82,9 @@ alp agent show migrator
 alp agent add migrator
 ```
 
-ALP load lại definition, chạy đủ ba tier, in authority/egress/cost và hỏi xác nhận. Trust chỉ hoàn tất trong terminal thật khi câu trả lời đúng `yes`; không có flag auto-approve.
+ALP load lại definition, chạy đủ ba tier, in authority, **enforced by**, egress, cost rồi hỏi xác nhận. Trust chỉ hoàn tất trong terminal thật khi câu trả lời đúng `yes`; không có flag auto-approve.
+
+Đọc khối **Enforced by** trước khi trả lời: nó nói phần nào của bảng Authority được runtime cưỡng chế thật và phần nào chỉ là ràng buộc mức prompt. Trên Codex, tool grant và read root thuộc nhóm thứ hai — vai không có `Bash` vẫn chạy được lệnh. Chi tiết ở [Agent và quyền](../../concepts/agents-and-authority/#runtime-nào-cưỡng-chế-phần-nào).
 
 Trust ghim hash theo **project + agent ID**. Hai project cùng có `migrator` là hai quyết định khác nhau.
 
@@ -112,4 +114,4 @@ alp agent show migrator
 alp agent test migrator --tier 1 --json
 ```
 
-`list/show` phải hiển thị đúng trust status và resolved authority. Xem [Skill của project](./project-skills/) để cấp knowledge mà không mở thêm tool.
+`list/show` phải hiển thị đúng trust status và resolved authority. Xem [Skill của project](../project-skills/) để cấp knowledge mà không mở thêm tool.

@@ -10,7 +10,7 @@ ALP sở hữu quyết định **ai được làm gì**; Claude Code hoặc Code
 - **Phiên main:** bạn chạy `alp` trong project. `main` là coordinator nói chuyện trực tiếp với bạn và có thể delegate việc chuyên môn.
 - **Delegated execution:** `main` hoặc một caller được cấp quyền gọi một role khác qua ALP Delegation API. Specialist nhận task đã chuẩn bị và trả report về caller.
 
-Không có đường public để chọn runtime trực tiếp. [Mode](./modes-and-runtimes/) chọn model cho từng role; model đó quyết định runtime.
+Không có đường public để chọn runtime trực tiếp. [Mode](../modes-and-runtimes/) chọn model cho từng role; model đó quyết định runtime.
 
 ## Luồng một execution
 
@@ -49,6 +49,8 @@ Fail-closed ưu tiên lỗi nhìn thấy được hơn hành vi “có vẻ vẫ
 - definition đổi sau khi trust sẽ bị deny đến khi duyệt lại;
 - private memory không mở cho role khác chỉ vì role đó báo cáo lên coordinator.
 
+Những quyết định trên do ALP giữ, trước khi runtime chạy. Sau khi execution đã spawn thì mức cưỡng chế tuỳ runtime — xem [runtime nào cưỡng chế phần nào](../agents-and-authority/#runtime-nào-cưỡng-chế-phần-nào).
+
 ## Source và artifact
 
 Phân biệt hai nhóm để không sửa nhầm:
@@ -67,4 +69,4 @@ Artifact có thể bị ghi đè ở lần sync, update hoặc execution tiếp 
 
 Dùng `alp agent show <role>` để xem authority và skill resolution; dùng `alp agent test <role>` để kiểm static grants, dry-run prepare và deny paths mà không gọi model.
 
-Tiếp theo: [Agent và quyền](./agents-and-authority/) hoặc [Giao việc](../guides/delegation/).
+Tiếp theo: [Agent và quyền](../agents-and-authority/) hoặc [Giao việc](../../guides/delegation/).

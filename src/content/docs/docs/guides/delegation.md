@@ -66,4 +66,4 @@ Không truyền cờ để giả caller role, chọn raw backend hoặc bypass p
 
 Với background execution, `status` phải trả cùng ID và một trạng thái trong lifecycle. Sau `wait`, execution phải ở `completed`, `failed` hoặc `cancelled`; không tự giả định execution thành công chỉ vì spawn thành công.
 
-Nếu delegation dừng trước launch, xem [Xử lý sự cố](../reference/troubleshooting/#delegation-dừng-trước-khi-launch).
+Nếu delegation dừng trước launch, xem [Xử lý sự cố](../../reference/troubleshooting/#delegation-dừng-trước-khi-launch).

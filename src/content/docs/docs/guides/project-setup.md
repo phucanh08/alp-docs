@@ -67,4 +67,4 @@ alp deinit ~/code/my-app
 - `git status --short` không liệt kê generated runtime config/link.
 - Chạy `alp` trong project đã init cho `main` quyền write; cwd khác vẫn read-only.
 
-Tiếp theo: [Giao việc cho specialist](./delegation/).
+Tiếp theo: [Giao việc cho specialist](../delegation/).

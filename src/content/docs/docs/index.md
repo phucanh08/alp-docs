@@ -37,5 +37,7 @@ Nếu role, tool, path hoặc memory scope không được khai báo, ALP từ c
 ## Ranh giới quan trọng
 
 :::caution[Policy có hiệu lực trước prompt]
-Một yêu cầu trong prompt không thể cấp thêm tool, workspace hay private memory. Hãy sửa definition và đi qua trust flow thay vì tìm đường vòng trong runtime.
+Một yêu cầu trong prompt không thể sửa policy đã chốt: muốn thêm tool, workspace hay private memory thì sửa definition và đi qua trust flow, đừng tìm đường vòng trong runtime.
+
+Mức cưỡng chế thì tuỳ runtime. Claude Code từ chối tool và read root ngoài grant ngay lúc gọi; trên Codex CLI hai phần đó là ràng buộc mức prompt, chỉ ghi và egress mạng bị sandbox chặn thật. Xem [runtime nào cưỡng chế phần nào](./concepts/agents-and-authority/#runtime-nào-cưỡng-chế-phần-nào).
 :::

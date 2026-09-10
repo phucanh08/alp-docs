@@ -81,4 +81,4 @@ Mặc định ALP chuyển memory sang một thư mục backup cạnh `~/.alp`, 
 `alp uninstall --purge-memory` xoá memory thay vì tạo backup. Chỉ dùng sau khi đã tự sao lưu và xác nhận đúng machine state cần xoá.
 :::
 
-Tiếp theo: [khởi tạo project và mở phiên đầu tiên](./quickstart/).
+Tiếp theo: [khởi tạo project và mở phiên đầu tiên](../quickstart/).

@@ -3,7 +3,7 @@ title: CLI reference
 description: Public command và option của stable ALP cùng source preview hiện tại.
 ---
 
-Reference này phản ánh checkout tại commit `777113b`, sau stable `v0.10.4`. Nguồn kiểm chứng: [`src/cli/alp.ts`](https://github.com/phucanh08/alp-code/blob/777113b1691fd7f73d501866edf79dd2cd3e66fe/src/cli/alp.ts) và [`src/cli/commands/`](https://github.com/phucanh08/alp-code/tree/777113b1691fd7f73d501866edf79dd2cd3e66fe/src/cli/commands).
+Reference này phản ánh checkout tại commit `7833490`, sau stable `v0.10.4`. Nguồn kiểm chứng: [`src/cli/alp.ts`](https://github.com/phucanh08/alp-code/blob/7833490e6c6aa5420310beb1e0d08ce8a4c2d591/src/cli/alp.ts) và [`src/cli/commands/`](https://github.com/phucanh08/alp-code/tree/7833490e6c6aa5420310beb1e0d08ce8a4c2d591/src/cli/commands).
 
 Internal hook/supervisor dispatch không thuộc public API và không được liệt kê ở đây.
 
@@ -53,6 +53,8 @@ alp agent list [--project <path>] [--json]
 - `show` in definition, trust/capability diff và skill resolution.
 - `untrust` thu trust theo project + ID.
 - `list --json` và `test --json` phù hợp cho script; `add/show/untrust` không nhận `--json`.
+
+- Tier 2 của `test` và `add` in disclosure đầy đủ: Authority, **Enforced by**, Egress, Cost, Launch.
 
 `agent test` trả `0` khi sạch, `1` khi có finding.
 
@@ -114,4 +116,4 @@ Doctor trả `0` khi healthy, `1` khi có finding và `2` khi doctor tự lỗi.
 | `ALP_STATE_HOME` | Đổi machine state root |
 | `ALP_MEMORY_ROOT` | Đổi riêng memory root |
 
-Với lỗi parser hoặc policy, xem [Xử lý sự cố](./troubleshooting/).
+Với lỗi parser hoặc policy, xem [Xử lý sự cố](../troubleshooting/).

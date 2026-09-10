@@ -52,7 +52,7 @@ Bạn cũng có thể override đúng một phiên:
 alp --mode high
 ```
 
-`medium` phù hợp phần lớn công việc hằng ngày. Xem [Nấc và runtime](../concepts/modes-and-runtimes/) trước khi chọn `high`, `ultra` hoặc `puck`.
+`medium` phù hợp phần lớn công việc hằng ngày. Xem [Nấc và runtime](../../concepts/modes-and-runtimes/) trước khi chọn `high`, `ultra` hoặc `puck`.
 
 ## 4. Mở phiên
 
@@ -71,4 +71,4 @@ Trong phiên, hãy giao một kết quả có thể kiểm chứng, ví dụ: �
 - `alp` mở runtime tương ứng thay vì báo thiếu runtime.
 - `git status --short` không xuất hiện generated settings hoặc packaged skill links do ALP sở hữu.
 
-Tiếp theo: [hiểu cách ALP chuẩn bị một execution](../concepts/how-alp-works/).
+Tiếp theo: [hiểu cách ALP chuẩn bị một execution](../../concepts/how-alp-works/).

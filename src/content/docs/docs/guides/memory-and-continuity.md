@@ -25,6 +25,8 @@ Default Markdown store nằm dưới `~/.alp/memory`. `ALP_MEMORY_ROOT` có th�
 
 :::caution[Private nghĩa là owner-only]
 Quan hệ reports-to không cấp quyền đọc private memory của role khác. Fact cần dùng chung phải đi vào shared/project scope phù hợp hoặc được trả trong output.
+
+Mức cưỡng chế khác nhau theo runtime: trên Claude đây là ACL thật, trên Codex là ràng buộc mức prompt vì sandbox read-only cho đọc mọi path. Xem [runtime nào cưỡng chế phần nào](../../concepts/agents-and-authority/#runtime-nào-cưỡng-chế-phần-nào).
 :::
 
 ## Continuity checkpoint
