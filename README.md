@@ -63,7 +63,7 @@ Ba brand asset đều là vector SVG: `public/favicon.svg` dùng cho browser/app
 
 ## Thêm trang tài liệu
 
-Tạo file `.md` trong `src/content/docs/`. Thư mục và tên file quyết định URL; frontmatter cung cấp metadata cho navigation và SEO.
+Tạo file `.md` trong `src/content/docs/docs/`. Thư mục và tên file quyết định URL dưới `/docs/`; frontmatter cung cấp metadata cho navigation và SEO.
 
 ```md
 ---
@@ -78,7 +78,7 @@ sidebar:
 Viết hướng dẫn tại đây.
 ```
 
-Sidebar nhóm `Hướng dẫn` tự động đọc các trang trong `src/content/docs/guides/`. Xem thêm trang [Viết tài liệu bằng Markdown](src/content/docs/guides/writing-markdown.md).
+Sidebar nhóm `Hướng dẫn` tự động đọc các trang trong `src/content/docs/docs/guides/`. Xem thêm trang [Viết tài liệu bằng Markdown](src/content/docs/docs/guides/writing-markdown.md).
 
 ## Trước khi deploy
 
@@ -96,7 +96,7 @@ Thiết lập lần đầu:
 3. Ở **Build and deployment → Source**, chọn **GitHub Actions**.
 4. Push một commit hoặc chạy workflow thủ công.
 
-Workflow tự suy ra URL từ `GITHUB_REPOSITORY`:
+Workflow đặt production URL qua `DEPLOY_SITE=https://alp.anhlp.com`, phục vụ docs tại `https://alp.anhlp.com/docs/` và redirect `/` về `/docs/`. Nếu bỏ `DEPLOY_SITE`, config vẫn tự suy ra URL từ `GITHUB_REPOSITORY`:
 
 - Project repository: `https://<owner>.github.io/<repo>/`.
 - User/organization repository tên `<owner>.github.io`: `https://<owner>.github.io/`.
