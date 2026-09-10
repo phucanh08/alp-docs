@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-Mỗi file `.md` trong `src/content/docs/` trở thành một trang. Thư mục và tên file quyết định URL; frontmatter cung cấp metadata cho navigation và SEO.
+Mỗi file `.md` trong `src/content/docs/docs/` trở thành một trang dưới `/docs/`. Thư mục và tên file quyết định URL; frontmatter cung cấp metadata cho navigation và SEO.
 
 ## Frontmatter tối thiểu
 

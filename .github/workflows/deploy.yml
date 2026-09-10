@@ -27,6 +27,7 @@ jobs:
           node-version: 24
         env:
           DEPLOY_TARGET: github-pages
+          DEPLOY_SITE: https://alp.anhlp.com
 
   deploy:
     needs: build

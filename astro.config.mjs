@@ -3,20 +3,30 @@ import starlight from '@astrojs/starlight';
 
 const githubRepository = process.env.GITHUB_REPOSITORY?.split('/');
 const isGitHubPagesBuild = process.env.DEPLOY_TARGET === 'github-pages';
+const deploymentSite = process.env.DEPLOY_SITE;
 const [githubOwner, githubRepo] = githubRepository ?? [];
 const isUserOrOrganizationPage =
   githubOwner && githubRepo?.toLowerCase() === `${githubOwner.toLowerCase()}.github.io`;
 
 const githubPages =
-  isGitHubPagesBuild && githubOwner && githubRepo
+  isGitHubPagesBuild && deploymentSite
+    ? {
+        site: deploymentSite,
+        base: '/',
+      }
+    : isGitHubPagesBuild && githubOwner && githubRepo
     ? {
         site: `https://${githubOwner}.github.io`,
         base: isUserOrOrganizationPage ? '/' : `/${githubRepo}`,
       }
     : {};
+const docsRoot = githubPages.base && githubPages.base !== '/' ? `${githubPages.base}/docs/` : '/docs/';
 
 export default defineConfig({
   ...githubPages,
+  redirects: {
+    '/': docsRoot,
+  },
   integrations: [
     starlight({
       title: 'ALP Docs',
@@ -39,11 +49,11 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Bắt đầu',
-          items: [{ label: 'Giới thiệu', slug: 'index' }],
+          items: [{ label: 'Giới thiệu', slug: 'docs' }],
         },
         {
           label: 'Hướng dẫn',
-          items: [{ autogenerate: { directory: 'guides' } }],
+          items: [{ autogenerate: { directory: 'docs/guides' } }],
         },
       ],
     }),

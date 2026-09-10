@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Astro hiển thị URL local trong terminal. Thay đổi file trong `src/content/docs/` sẽ được cập nhật ngay.
+Astro hiển thị URL local trong terminal. Thay đổi file trong `src/content/docs/docs/` sẽ được cập nhật ngay.
 
 ## Tạo production build
 
