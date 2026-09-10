@@ -1,0 +1,111 @@
+name: Kiểm tra release mới của alp-code
+
+# alp-docs tự hỏi, alp-code không phải bắn gì sang. Đường release của alp-code cố ý
+# chạy tay và không có GitHub Actions; thêm một bước dispatch vào đó là thêm đúng cái
+# async failure mode mà skill release đã loại bỏ. Nên chiều thông tin đi ngược lại:
+# repo docs poll, và cái nó tạo ra là một PR nháp chứ không phải một commit.
+
+on:
+  schedule:
+    # 02:00 UTC ≈ 09:00 giờ VN. Cron của GitHub chạy trễ vào giờ cao điểm; job này
+    # không cần đúng phút nào cả.
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag cụ thể của alp-code (bỏ trống = release mới nhất)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: alp-code-release-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Đối chiếu docs với release mới nhất
+        id: sync
+        env:
+          # Token mặc định chỉ để nâng rate limit khi gọi API công khai của alp-code.
+          GITHUB_TOKEN: ${{ github.token }}
+          # Qua env chứ không nội suy ${{ }} thẳng vào dòng lệnh: input của
+          # workflow_dispatch là chuỗi người dùng nhập, nội suy thẳng là lỗ shell injection.
+          TAG: ${{ inputs.tag }}
+        run: node scripts/sync-release.mjs --tag "$TAG" --report "$RUNNER_TEMP/pr-body.md"
+
+      - name: Không có release mới
+        if: steps.sync.outputs.drift != 'true'
+        run: |
+          echo "Docs đang mô tả stable \`${{ steps.sync.outputs.previous }}\`, và đó vẫn là release mới nhất của alp-code." >> "$GITHUB_STEP_SUMMARY"
+
+      # Build chạy trên cây đã bị codemod sửa, và cố ý KHÔNG chặn PR: một release làm
+      # gãy build là chuyện phải thấy trong PR, không phải chuyện làm PR biến mất.
+      - name: Build thử sau codemod
+        id: build
+        if: steps.sync.outputs.drift == 'true'
+        continue-on-error: true
+        run: |
+          npm ci
+          npm run build
+
+      - name: Ghi kết quả build vào thân PR
+        if: steps.sync.outputs.drift == 'true'
+        run: |
+          {
+            echo ""
+            echo "### Build trên runner"
+            if [ "${{ steps.build.outcome }}" = "success" ]; then
+              echo "\`npm ci && npm run build\` xanh trên cây đã codemod."
+            else
+              echo "> [!WARNING]"
+              echo "> \`npm ci && npm run build\` **fail** trên cây đã codemod. Đọc log job trước khi rà nội dung."
+            fi
+          } >> "$RUNNER_TEMP/pr-body.md"
+
+      - name: Mở PR nháp
+        id: pr
+        if: steps.sync.outputs.drift == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: sync/alp-code-${{ steps.sync.outputs.tag }}
+          base: main
+          # Nháp, không auto-merge, không bao giờ. Codemod chỉ đúng phần suy được từ tag;
+          # banner preview nào phải xoá và CLI reference nào đã lệch thì report chỉ đo
+          # và hỏi, người đọc PR mới trả lời được.
+          draft: true
+          delete-branch: true
+          # Chỉ hai đường dẫn này. `npm ci`/`npm run build` để lại node_modules và dist
+          # trong workspace; chúng nằm trong .gitignore nhưng liệt kê tường minh vẫn chắc hơn.
+          add-paths: |
+            alp-code-pin.json
+            src/content/docs/docs/**
+          commit-message: "docs: đồng bộ version và commit pin với alp-code ${{ steps.sync.outputs.tag }}"
+          title: "docs: đồng bộ với alp-code ${{ steps.sync.outputs.tag }}"
+          body-path: ${{ runner.temp }}/pr-body.md
+          labels: |
+            sync
+            cần rà tay
+
+      - name: Tóm tắt PR
+        if: steps.sync.outputs.drift == 'true'
+        run: |
+          if [ "${{ steps.pr.outputs.pull-request-operation }}" = "none" ]; then
+            echo "Đã có PR đồng bộ \`${{ steps.sync.outputs.tag }}\` và không có thay đổi mới." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "PR (${{ steps.pr.outputs.pull-request-operation }}): ${{ steps.pr.outputs.pull-request-url }}" >> "$GITHUB_STEP_SUMMARY"
+          fi

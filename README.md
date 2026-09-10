@@ -40,6 +40,8 @@ Static output nằm trong `dist/`. Pagefind index chỉ được sinh khi build,
 | `npm run dev` | Chạy development server với hot reload |
 | `npm run build` | Build static site và Pagefind index vào `dist/` |
 | `npm run preview` | Preview production build local |
+| `npm run check:release` | Hỏi GitHub xem alp-code đã có release nào mới hơn pin chưa; thoát `1` nếu có |
+| `npm run sync:release` | Chạy codemod version/pin rồi in report những chỗ cần người quyết định |
 
 ## Cấu trúc
 
@@ -78,7 +80,7 @@ sidebar:
 Viết hướng dẫn tại đây.
 ```
 
-Sidebar nhóm `Hướng dẫn` tự động đọc các trang trong `src/content/docs/docs/guides/`. Xem thêm trang [Viết tài liệu bằng Markdown](src/content/docs/docs/guides/writing-markdown.md).
+Sidebar nhóm `Hướng dẫn` tự động đọc các trang trong `src/content/docs/docs/guides/`.
 
 ## Trước khi deploy
 
@@ -102,6 +104,39 @@ Workflow đặt production URL qua `DEPLOY_SITE=https://alp.anhlp.com`, phục v
 - User/organization repository tên `<owner>.github.io`: `https://<owner>.github.io/`.
 
 Không cần GitHub secret. Workflow dùng `GITHUB_TOKEN` ngắn hạn với quyền tối thiểu `contents: read`, `pages: write` và `id-token: write`.
+
+## Đồng bộ với alp-code
+
+`alp-code` và `alp-docs` là hai repository độc lập. Đường release của `alp-code` cố ý chạy tay và không dùng GitHub Actions, nên thông tin đi ngược lại: repo docs tự hỏi, `alp-code` không phải bắn gì sang.
+
+`alp-code-pin.json` giữ hai giá trị và chúng **không** phải một:
+
+| Trường | Nghĩa |
+|---|---|
+| `stable` | Release mà docs đang gọi là stable |
+| `pin` | Revision nguồn mà docs đã được đối chiếu |
+
+`pin` được phép chạy trước `stable`: docs mô tả cả preview sau tag mới nhất, và đó là trạng thái làm việc bình thường chứ không phải lỗi. Vì vậy drift chỉ đo theo `stable`.
+
+Workflow [`.github/workflows/check-alp-code-release.yml`](.github/workflows/check-alp-code-release.yml) chạy hằng ngày lúc 02:00 UTC, và chạy tay được qua **Actions → Kiểm tra release mới của alp-code → Run workflow** (có thể truyền một tag cụ thể thay vì lấy release mới nhất). Khi có release mới, nó mở **PR nháp** chứ không commit thẳng.
+
+Ranh giới giữa máy và người:
+
+- **Máy sửa:** chuỗi version, commit pin và link kiểm chứng — những thứ suy được từ một cái tag.
+- **Máy chỉ đo rồi hỏi:** banner preview nào phải xoá, và `reference/cli.md` đã lệch chỗ nào. Thân PR đính kèm mục CHANGELOG của release đó, diff help text giữa pin cũ và tag mới, và checklist từng banner.
+
+Lý do tách như vậy: một release đưa `alp agent` vào stable thì banner “chưa có trong stable `v0.10.4`” phải bị **xoá**, không phải đổi số. Tự đổi số là biến docs từ cũ thành sai. PR luôn ở trạng thái nháp và không bao giờ auto-merge.
+
+Build trên runner **không** chặn PR. Một release làm gãy build là chuyện phải thấy trong PR, không phải chuyện làm PR biến mất; kết quả build được ghi thẳng vào thân PR.
+
+Thiết lập lần đầu:
+
+1. Mở **Settings → Actions → General → Workflow permissions**.
+2. Bật **Allow GitHub Actions to create and approve pull requests**. Không bật thì bước mở PR fail với lỗi permission.
+
+Hai điều cần biết về `schedule`: workflow phải nằm trên nhánh mặc định mới chạy, và GitHub tắt scheduled workflow sau 60 ngày repository không có hoạt động nào — chạy tay một lần là bật lại.
+
+Chạy local cũng được. `check:release` chỉ hỏi và thoát `1` nếu lệch, hợp cho một bước CI riêng; `sync:release` sửa cây làm việc rồi in report ra stdout.
 
 ## Changelog
 
