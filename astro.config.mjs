@@ -21,6 +21,13 @@ export default defineConfig({
     starlight({
       title: 'ALP Docs',
       description: 'Tài liệu ngắn gọn để xây dựng, vận hành và mở rộng ALP.',
+      favicon: '/favicon.svg',
+      logo: {
+        dark: './src/assets/alp-wordmark-on-dark.svg',
+        light: './src/assets/alp-wordmark-on-light.svg',
+        alt: 'ALP',
+        replacesTitle: true,
+      },
       defaultLocale: 'root',
       locales: {
         root: {
@@ -32,7 +39,7 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Bắt đầu',
-          items: [{ label: 'Tổng quan', slug: 'index' }],
+          items: [{ label: 'Giới thiệu', slug: 'index' }],
         },
         {
           label: 'Hướng dẫn',
