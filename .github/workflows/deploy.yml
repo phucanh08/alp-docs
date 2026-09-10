@@ -8,15 +8,13 @@ on:
   # Khung site đổi.
   push:
     branches: [main]
-  # Content bên alp-code đổi. alp-code không phải bắn gì sang: repo này tự hỏi.
+  # Content bên alp-code đổi. alp-code không bắn gì sang — làm vậy cần token của repo
+  # này nằm trong secret của một repo public — nên repo này tự hỏi mỗi giờ.
   schedule:
     - cron: "0 * * * *"
+  # Đường đi tức thì: `gh workflow run deploy.yml -R phucanh08/alp-docs` từ máy
+  # maintainer sau khi push docs/user/. Xem docs/user/README.md bên alp-code.
   workflow_dispatch:
-  # Đường đi tức thì: alp-code POST một repository_dispatch type `docs-updated` từ
-  # .github/workflows/notify-docs.yml khi docs/user/ đổi trên main. Workflow đó tự bỏ
-  # qua nếu chưa có secret ALP_DOCS_DISPATCH_TOKEN, nên cron ở trên vẫn là lưới an toàn.
-  repository_dispatch:
-    types: [docs-updated]
 
 permissions:
   contents: read
